@@ -16,8 +16,8 @@ if sys.version_info <= (2, 7):
     sys.exit(1)
 
 name = "Flask-Helper"
-version = "0.2"
-url = "https://github.com/meisanggou/flask_helper"
+version = "0.3"
+url = "https://github.com/meisanggou/Flask-Helper"
 license = "MIT"
 author = "meisanggou"
 short_description = "Flask Helper"

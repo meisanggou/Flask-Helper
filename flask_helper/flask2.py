@@ -1,9 +1,7 @@
 #! /usr/bin/env python
 # coding: utf-8
 
-import re
 from datetime import datetime
-from time import time
 from flask import Flask, g, jsonify, request, make_response
 from flask_helper.util.ip import ip_value_str
 
