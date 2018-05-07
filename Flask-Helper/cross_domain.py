@@ -3,7 +3,7 @@
 __author__ = 'meisanggou'
 
 
-class JYFlaskCrossDomain(object):
+class FlaskCrossDomain(object):
     """
         add in 0.1
     """

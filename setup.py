@@ -15,14 +15,14 @@ if sys.version_info <= (2, 7):
     sys.stderr.write("Your Python Version is %s.%s.%s.\n" % sys.version_info[:3])
     sys.exit(1)
 
-name = "JYFlask"
+name = "Flask-Helper"
 version = "0.1"
-url = "https://github.com/meisanggou/JYFlask"
+url = "https://github.com/meisanggou/Flask-Helper"
 license = "MIT"
 author = "meisanggou"
-short_description = "Jing Yun Flask"
-long_description = """Jing Yun Flask Library."""
-keywords = "JYFlask"
+short_description = "Flask Helper"
+long_description = """Some Tools For Help You Use Flask"""
+keywords = "Flask-Helper"
 install_requires = ["Flask"]
 
 setup(name=name,
@@ -30,7 +30,7 @@ setup(name=name,
       author=author,
       author_email="zhouheng@gene.ac",
       url=url,
-      packages=["JYFlask"],
+      packages=["Flask-Helper"],
       license=license,
       description=short_description,
       long_description=long_description,
