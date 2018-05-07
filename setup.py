@@ -16,13 +16,13 @@ if sys.version_info <= (2, 7):
     sys.exit(1)
 
 name = "Flask-Helper"
-version = "0.1"
-url = "https://github.com/meisanggou/Flask-Helper"
+version = "0.2"
+url = "https://github.com/meisanggou/flask_helper"
 license = "MIT"
 author = "meisanggou"
 short_description = "Flask Helper"
 long_description = """Some Tools For Help You Use Flask"""
-keywords = "Flask-Helper"
+keywords = "flask_helper"
 install_requires = ["Flask"]
 
 setup(name=name,
@@ -30,7 +30,7 @@ setup(name=name,
       author=author,
       author_email="zhouheng@gene.ac",
       url=url,
-      packages=["Flask-Helper"],
+      packages=["flask_helper", "flask_helper/util"],
       license=license,
       description=short_description,
       long_description=long_description,
