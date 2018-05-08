@@ -2,7 +2,7 @@
 # coding: utf-8
 
 from datetime import datetime
-from flask import Flask, g, jsonify, request, make_response
+from flask import Flask, g, jsonify, request, make_response, send_from_directory
 from flask_helper.util.ip import ip_value_str
 
 
@@ -26,6 +26,15 @@ class _Flask2(Flask):
     def add_url_rule(self, rule, endpoint=None, view_func=None, **options):
         rule = self.app_url_prefix + rule
         super(_Flask2, self).add_url_rule(rule=rule, endpoint=endpoint, view_func=view_func, **options)
+
+    def send_static_file2(self, filename, static_folder=None):
+        if static_folder is None:
+            if not self.has_static_folder:
+                raise RuntimeError('No static folder for this object')
+            static_folder = self.static_folder
+
+        cache_timeout = self.get_send_file_max_age(filename)
+        return send_from_directory(static_folder, filename, cache_timeout=cache_timeout)
 
     def _handle_500(self, e):
         resp = jsonify({"status": self.config.get("ERROR_STATUS", 99), "message": str(e)})
