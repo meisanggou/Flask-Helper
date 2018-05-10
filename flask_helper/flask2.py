@@ -42,7 +42,7 @@ class _Flask2(Flask):
 
 
 class Flask2(_Flask2):
-    TRUST_PROXY = None
+    TRUST_PROXY = []
 
     @staticmethod
     def _assign_default_g():
