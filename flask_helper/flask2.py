@@ -4,6 +4,7 @@
 from datetime import datetime
 from flask import Flask, g, jsonify, request, make_response, send_from_directory
 from flask_helper.util.ip import ip_value_str
+from flask_helper.url_rule import UrlRules, UrlRule
 
 
 __author__ = '鹛桑够'
@@ -22,6 +23,10 @@ class _Flask2(Flask):
     def run(self, host=None, port=None, debug=None, **options):
         self.run_time = datetime.now().strftime(_Flask2.TIME_FORMAT)
         super(_Flask2, self).run(host=host, port=port, debug=debug, **options)
+
+    def add_url_rule2(self, url_rule):
+        assert isinstance(url_rule, UrlRule)
+        self.add_url_rule(url_rule.rule, url_rule.endpoint, url_rule.view_func, **url_rule.options)
 
     def add_url_rule(self, rule, endpoint=None, view_func=None, **options):
         rule = self.app_url_prefix + rule
@@ -85,10 +90,6 @@ class Flask2(_Flask2):
         return jsonify({"status": self.config.get("MSG_STATUS", 2), "message": ping_msg})
 
     def __init__(self, import_name, **kwargs):
-        """
-
-        :type kwargs: object
-        """
         self.blues = []
         super(Flask2, self).__init__(import_name, **kwargs)
         self.add_url_rule("/ping/", endpoint="app_ping", view_func=self.ping_func)
@@ -99,4 +100,11 @@ class Flask2(_Flask2):
 
     def register_blues(self):
         for blue_item in self.blues:
+            if hasattr(blue_item, "static_routes") is True:
+                for rule_item in blue_item.static_routes:
+                    self.add_url_rule2(rule_item)
             self.register_blueprint(blue_item)
+
+    def add_blueprint(self, blue):
+        blue.static_routes = UrlRules()
+        self.blues.append(blue)

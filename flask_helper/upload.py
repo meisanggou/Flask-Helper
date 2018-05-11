@@ -22,7 +22,7 @@ def support_upload(app_or_blue, upload_route="upload", get_route="file", static_
         cache_timeout = app_or_blue.get_send_file_max_age(filename)
         return send_from_directory(static_folder, filename, cache_timeout=cache_timeout)
 
-    get_endpoint = "%s_get_upload" % get_route
+    get_endpoint = "%s_get_upload" % get_route.replace("/", "_")
     app_or_blue.add_url_rule("/" + get_route + '/<path:filename>', endpoint=get_endpoint, view_func=get_upload)
 
     get_endpoint = "%s.%s" % (app_or_blue.name, get_endpoint)
