@@ -5,6 +5,7 @@ import os
 import uuid
 from werkzeug.utils import secure_filename
 from flask import Flask, Blueprint, send_from_directory, request, jsonify, url_for
+from flask_helper.util.folder import create_folder2
 
 __author__ = '鹛桑够'
 
@@ -37,4 +38,32 @@ def support_upload(app_or_blue, upload_route="upload", get_route="file", static_
             save_name = uuid.uuid4().hex + ".%s" % extension
             file_item.save(os.path.join(static_folder, save_name))
             r[key] = url_for(get_endpoint, filename=save_name)
+        return jsonify({"status": True, "data": r})
+
+
+def support_upload2(app_or_blue, folder_root, file_url_prefix, sub_folders, upload_route):
+    if isinstance(app_or_blue, (Flask, Blueprint)) is True:
+        raise RuntimeError("only support Flask or Blueprint object")
+    if file_url_prefix.endswith("/") is False:
+        file_url_prefix += "/"
+    if isinstance(sub_folders, basestring):
+        static_folder = create_folder2(folder_root, sub_folders)
+        url = file_url_prefix + sub_folders
+    else:
+        static_folder = create_folder2(folder_root, *sub_folders)
+        url = file_url_prefix + "/".join(sub_folders)
+    upload_route = upload_route.lstrip("/")
+    if upload_route.endswith("/") is False:
+        upload_route += "/"
+
+    @app_or_blue.route("/" + upload_route, methods=["POST"])
+    def handle_upload():
+        r = dict()
+        for key in request.files:
+            file_item = request.files[key]
+            filename = secure_filename(file_item.filename)
+            extension = filename.rsplit(".", 1)[-1].lower()
+            save_name = uuid.uuid4().hex + ".%s" % extension
+            file_item.save(os.path.join(static_folder, save_name))
+            r[key] = url + "/" + save_name
         return jsonify({"status": True, "data": r})
