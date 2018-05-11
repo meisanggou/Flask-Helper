@@ -56,7 +56,8 @@ def support_upload2(app_or_blue, folder_root, file_url_prefix, sub_folders, uplo
     if upload_route.endswith("/") is False:
         upload_route += "/"
 
-    @app_or_blue.route("/" + upload_route, methods=["POST"])
+    endpoint = upload_route.replace("/", "_")
+
     def handle_upload():
         r = dict()
         for key in request.files:
@@ -67,3 +68,5 @@ def support_upload2(app_or_blue, folder_root, file_url_prefix, sub_folders, uplo
             file_item.save(os.path.join(static_folder, save_name))
             r[key] = url + "/" + save_name
         return jsonify({"status": True, "data": r})
+
+    app_or_blue.add_url_rule("/" + upload_route, endpoint=endpoint, view_func=handle_upload, methods=["POST"])
