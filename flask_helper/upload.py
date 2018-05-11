@@ -42,7 +42,7 @@ def support_upload(app_or_blue, upload_route="upload", get_route="file", static_
 
 
 def support_upload2(app_or_blue, folder_root, file_url_prefix, sub_folders, upload_route):
-    if isinstance(app_or_blue, (Flask, Blueprint)) is True:
+    if isinstance(app_or_blue, (Flask, Blueprint)) is False:
         raise RuntimeError("only support Flask or Blueprint object")
     if file_url_prefix.endswith("/") is False:
         file_url_prefix += "/"
