@@ -4,6 +4,7 @@
 from datetime import datetime
 from flask import Flask, g, jsonify, request, make_response, send_from_directory
 from flask_helper.util.ip import ip_value_str
+from .ctx import RequestContext2
 
 
 __author__ = '鹛桑够'
@@ -35,6 +36,9 @@ class _Flask2(Flask):
 
         cache_timeout = self.get_send_file_max_age(filename)
         return send_from_directory(static_folder, filename, cache_timeout=cache_timeout)
+
+    def request_context(self, environ):
+        return RequestContext2(self, environ)
 
     def _handle_500(self, e):
         resp = jsonify({"status": self.config.get("ERROR_STATUS", 99), "message": str(e)})
