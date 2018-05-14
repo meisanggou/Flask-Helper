@@ -8,6 +8,7 @@ from .ctx import RequestContext2
 from user_agent import FilterUserAgent
 from cross_domain import FlaskCrossDomain
 from handle_30x import Handle30X
+from ip import RealIP
 from flask_helper.url_rule import UrlRules, UrlRule
 
 
@@ -54,29 +55,10 @@ class _Flask2(Flask):
 
 
 class Flask2(_Flask2):
-    TRUST_PROXY = []
 
     @staticmethod
     def _assign_default_g():
         pass
-
-    @staticmethod
-    def _request_real_ip():
-        request_ip = request.remote_addr
-        if "X-Forwarded-For" in request.headers and request_ip in Flask2.TRUST_PROXY:
-            tracert_ip = request.headers["X-Forwarded-For"].split(",")
-            request_ip = tracert_ip[0]
-            if isinstance(Flask2.TRUST_PROXY, list):
-                for i in range(len(tracert_ip) - 1, -1, -1):
-                    one_proxy = tracert_ip[i].strip()
-                    if one_proxy not in Flask2.TRUST_PROXY:
-                        request_ip = one_proxy
-                        break
-        g.request_ip = ip_value_str(ip_str=request_ip)
-        if g.request_ip == 0:
-            return make_response("IP受限", 403)
-        if "requests" in g:
-            g.requests.headers["X-Forwarded-For"] = request_ip
 
     @staticmethod
     def _packet_data():
@@ -101,7 +83,6 @@ class Flask2(_Flask2):
         super(Flask2, self).__init__(import_name, **kwargs)
         self.add_url_rule("/ping/", endpoint="app_ping", view_func=self.ping_func)
         self.before_request_funcs.setdefault(None, []).append(self._assign_default_g)
-        self.before_request_funcs[None].append(self._request_real_ip)
         self.before_request_funcs[None].append(self._packet_data)
         self.after_authorization_funcs = []
 
@@ -127,3 +108,9 @@ class Flask2(_Flask2):
     def handle_30x(self):
         h = Handle30X(self)
         return h
+
+    def real_ip(self, trust_proxy=None):
+        if trust_proxy is None:
+            trust_proxy = ["127.0.0.1"]
+        r = RealIP(self, trust_proxy)
+        return r
