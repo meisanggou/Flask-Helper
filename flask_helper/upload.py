@@ -5,6 +5,7 @@ import os
 import uuid
 from werkzeug.utils import secure_filename
 from flask import Flask, Blueprint, send_from_directory, request, jsonify, url_for
+from flask_helper.util.folder import create_folder2
 
 __author__ = '鹛桑够'
 
@@ -22,7 +23,7 @@ def support_upload(app_or_blue, upload_route="upload", get_route="file", static_
         cache_timeout = app_or_blue.get_send_file_max_age(filename)
         return send_from_directory(static_folder, filename, cache_timeout=cache_timeout)
 
-    get_endpoint = "%s_get_upload" % get_route
+    get_endpoint = "%s_get_upload" % get_route.replace("/", "_")
     app_or_blue.add_url_rule("/" + get_route + '/<path:filename>', endpoint=get_endpoint, view_func=get_upload)
 
     get_endpoint = "%s.%s" % (app_or_blue.name, get_endpoint)
@@ -38,3 +39,34 @@ def support_upload(app_or_blue, upload_route="upload", get_route="file", static_
             file_item.save(os.path.join(static_folder, save_name))
             r[key] = url_for(get_endpoint, filename=save_name)
         return jsonify({"status": True, "data": r})
+
+
+def support_upload2(app_or_blue, folder_root, file_url_prefix, sub_folders, upload_route):
+    if isinstance(app_or_blue, (Flask, Blueprint)) is False:
+        raise RuntimeError("only support Flask or Blueprint object")
+    if file_url_prefix.endswith("/") is False:
+        file_url_prefix += "/"
+    if isinstance(sub_folders, basestring):
+        static_folder = create_folder2(folder_root, sub_folders)
+        url = file_url_prefix + sub_folders
+    else:
+        static_folder = create_folder2(folder_root, *sub_folders)
+        url = file_url_prefix + "/".join(sub_folders)
+    upload_route = upload_route.lstrip("/")
+    if upload_route.endswith("/") is False:
+        upload_route += "/"
+
+    endpoint = upload_route.replace("/", "_")
+
+    def handle_upload():
+        r = dict()
+        for key in request.files:
+            file_item = request.files[key]
+            filename = secure_filename(file_item.filename)
+            extension = filename.rsplit(".", 1)[-1].lower()
+            save_name = uuid.uuid4().hex + ".%s" % extension
+            file_item.save(os.path.join(static_folder, save_name))
+            r[key] = url + "/" + save_name
+        return jsonify({"status": True, "data": r})
+
+    app_or_blue.add_url_rule("/" + upload_route, endpoint=endpoint, view_func=handle_upload, methods=["POST"])

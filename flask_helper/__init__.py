@@ -6,7 +6,7 @@ from globals import g2
 from flask2 import Flask2
 from cross_domain import FlaskCrossDomain
 from template import RenderTemplate
-from upload import support_upload
+from upload import support_upload, support_upload2
 
 
 __author__ = 'meisanggou'
