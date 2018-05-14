@@ -5,6 +5,9 @@ from datetime import datetime
 from flask import Flask, g, jsonify, request, make_response, send_from_directory
 from flask_helper.util.ip import ip_value_str
 from .ctx import RequestContext2
+from user_agent import FilterUserAgent
+from cross_domain import FlaskCrossDomain
+from handle_30x import Handle30X
 from flask_helper.url_rule import UrlRules, UrlRule
 
 
@@ -93,19 +96,6 @@ class Flask2(_Flask2):
         ping_msg = "Ping %s success. App run at %s" % (request.path, self.run_time)
         return jsonify({"status": self.config.get("MSG_STATUS", 2), "message": ping_msg})
 
-    @staticmethod
-    def support_30x(res):
-        if res.status_code > 302 or res.status_code < 301:
-            return
-        if "X-Request-Protocol" in request.headers:
-            pro = request.headers["X-Request-Protocol"]
-            if "Location" in res.headers:
-                location = res.headers["location"]
-                if location.startswith("http:"):
-                    res.headers["Location"] = pro + ":" + res.headers["Location"][5:]
-                elif location.startswith("/"):
-                    res.headers["Location"] = "%s://%s%s" % (pro, request.headers["Host"], location)
-
     def __init__(self, import_name, **kwargs):
         self.blues = []
         super(Flask2, self).__init__(import_name, **kwargs)
@@ -125,3 +115,15 @@ class Flask2(_Flask2):
     def add_blueprint(self, blue):
         blue.static_routes = UrlRules()
         self.blues.append(blue)
+
+    def filter_user_agent(self, *accept_agent):
+        fa = FilterUserAgent(self, *accept_agent)
+        return fa
+
+    def cross_domain(self):
+        fc = FlaskCrossDomain(self)
+        return fc
+
+    def handle_30x(self):
+        h = Handle30X(self)
+        return h
