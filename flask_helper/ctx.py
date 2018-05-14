@@ -10,4 +10,4 @@ class RequestContext2(RequestContext):
 
     def __init__(self, app, environ, request=None):
         RequestContext.__init__(self, app, environ, request)
-        self.g2 = "abc"
+        self.remote_addr = self.request.remote_addr

@@ -2,7 +2,7 @@
 # coding: utf-8
 
 from flask import g, request, jsonify, make_response
-from globals import g2
+from globals import remote_addr
 from flask2 import Flask2
 from cross_domain import FlaskCrossDomain
 from template import RenderTemplate

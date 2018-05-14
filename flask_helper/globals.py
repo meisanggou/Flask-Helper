@@ -8,4 +8,4 @@ from flask.globals import _lookup_req_object
 __author__ = '鹛桑够'
 
 
-g2 = LocalProxy(partial(_lookup_req_object, 'g2'))
+remote_addr = LocalProxy(partial(_lookup_req_object, 'remote_addr'))

@@ -3,7 +3,6 @@
 
 from datetime import datetime
 from flask import Flask, g, jsonify, request, make_response, send_from_directory
-from flask_helper.util.ip import ip_value_str
 from .ctx import RequestContext2
 from user_agent import FilterUserAgent
 from cross_domain import FlaskCrossDomain

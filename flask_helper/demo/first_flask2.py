@@ -14,6 +14,8 @@ app.handle_30x()
 
 @app.route("/")
 def index():
+    from flask_helper import remote_addr
+    print(remote_addr)
     return "success"
 
 
