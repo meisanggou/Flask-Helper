@@ -89,6 +89,19 @@ class Flask2(_Flask2):
         ping_msg = "Ping %s success. App run at %s" % (request.path, self.run_time)
         return jsonify({"status": self.config.get("MSG_STATUS", 2), "message": ping_msg})
 
+    @staticmethod
+    def support_30x(res):
+        if res.status_code > 302 or res.status_code < 301:
+            return
+        if "X-Request-Protocol" in request.headers:
+            pro = request.headers["X-Request-Protocol"]
+            if "Location" in res.headers:
+                location = res.headers["location"]
+                if location.startswith("http:"):
+                    res.headers["Location"] = pro + ":" + res.headers["Location"][5:]
+                elif location.startswith("/"):
+                    res.headers["Location"] = "%s://%s%s" % (pro, request.headers["Host"], location)
+
     def __init__(self, import_name, **kwargs):
         self.blues = []
         super(Flask2, self).__init__(import_name, **kwargs)
