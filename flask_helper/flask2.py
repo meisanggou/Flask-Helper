@@ -1,6 +1,8 @@
 #! /usr/bin/env python
 # coding: utf-8
 
+import sys
+import re
 from datetime import datetime
 from flask import Flask, g, jsonify, request, make_response, send_from_directory
 from .ctx import RequestContext2
@@ -23,9 +25,26 @@ class _Flask2(Flask):
         self.run_time = datetime.now().strftime(self.TIME_FORMAT)
         super(_Flask2, self).__init__(import_name, **kwargs)
         self.register_error_handler(500, self._handle_500)
+        self._broken_rules = set()
+
+    def add_broken_rule(self, rule):
+        if isinstance(rule, (str, unicode)):
+            self._broken_rules.add(rule)
+
+    def clear_broken_rules(self):
+        self._broken_rules.clear()
+
+    def remove_broken_rule(self, rule):
+        self._broken_rules.remove(rule)
+
+    def list_broken_rules(self):
+        return list(self._broken_rules)
 
     def run(self, host=None, port=None, debug=None, **options):
         self.run_time = datetime.now().strftime(_Flask2.TIME_FORMAT)
+        if port is not None and port <= 0:
+            sys.stderr.write("Not run. port must greater than 0.\n")
+            return None
         super(_Flask2, self).run(host=host, port=port, debug=debug, **options)
 
     def add_url_rule2(self, url_rule):
@@ -34,6 +53,10 @@ class _Flask2(Flask):
 
     def add_url_rule(self, rule, endpoint=None, view_func=None, **options):
         rule = self.app_url_prefix + rule
+        for item in self._broken_rules:
+            if re.search(item, rule) is not None:
+                sys.stderr.write("Not add %s, is broken rule\n" % rule)
+                return None
         super(_Flask2, self).add_url_rule(rule=rule, endpoint=endpoint, view_func=view_func, **options)
 
     def send_static_file2(self, filename, static_folder=None):
