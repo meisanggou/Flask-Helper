@@ -84,8 +84,8 @@ class Flask2(_Flask2):
 
     @staticmethod
     def _packet_data():
-        if request.method == "OPTIONS":
-            return make_response("success", 204)
+        # if request.method == "OPTIONS":
+        #     return make_response("success", 204)
         if request.method != "GET":
             if request.json is None:
                 g.request_data = {}
