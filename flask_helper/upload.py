@@ -3,8 +3,9 @@
 
 import os
 import uuid
+import hashlib
 from werkzeug.utils import secure_filename
-from flask import Flask, Blueprint, send_from_directory, request, jsonify, url_for
+from flask import Flask, Blueprint, send_from_directory, request, jsonify, url_for, make_response
 from flask_helper.util.folder import create_folder2
 
 __author__ = '鹛桑够'
@@ -41,7 +42,10 @@ def support_upload(app_or_blue, upload_route="upload", get_route="file", static_
         return jsonify({"status": True, "data": r})
 
 
-def support_upload2(app_or_blue, folder_root, file_url_prefix, sub_folders, upload_route):
+def support_upload2(app_or_blue, folder_root, file_url_prefix, sub_folders, upload_route, **kwargs):
+    allow_extensions = kwargs.pop("allow_extensions", None)
+    rename_mode = kwargs.pop("rename_mode", "uuid")
+
     if isinstance(app_or_blue, (Flask, Blueprint)) is False:
         raise RuntimeError("only support Flask or Blueprint object")
     if file_url_prefix.endswith("/") is False:
@@ -64,8 +68,17 @@ def support_upload2(app_or_blue, folder_root, file_url_prefix, sub_folders, uplo
             file_item = request.files[key]
             filename = secure_filename(file_item.filename)
             extension = filename.rsplit(".", 1)[-1].lower()
-            save_name = uuid.uuid4().hex + ".%s" % extension
-            file_item.save(os.path.join(static_folder, save_name))
+            if allow_extensions is not None and extension not in allow_extensions:
+                return make_response("Not Allow File Extension", 400)
+            if rename_mode == "sha1":
+                save_name = hashlib.sha1(file_item.read()).hexdigest() + ".%s" % extension
+                save_path = os.path.join(static_folder, save_name)
+                if os.path.exists(save_path) is False:
+                    file_item.seek(0)
+                    file_item.save(save_path)
+            else:
+                save_name = uuid.uuid4().hex + ".%s" % extension
+                file_item.save(os.path.join(static_folder, save_name))
             r[key] = url + "/" + save_name
         return jsonify({"status": True, "data": r})
 
