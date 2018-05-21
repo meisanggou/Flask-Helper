@@ -37,6 +37,8 @@ class SecureCookieSessionInterface2(SecureCookieSessionInterface):
         return sc
 
     def get_expiration_time(self, app, session):
+        if "permanent_session" in session and session["permanent_session"] is True:
+            return None
         if "permanent_session" in g and g.permanent_session is True:
             return None
         SecureCookieSessionInterface.get_expiration_time(self, app, session)
