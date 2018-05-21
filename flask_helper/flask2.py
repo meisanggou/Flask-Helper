@@ -10,6 +10,7 @@ from user_agent import FilterUserAgent
 from cross_domain import FlaskCrossDomain
 from handle_30x import Handle30X
 from ip import RealIP
+from sessions import SecureCookieSessionInterface2
 from flask_helper.url_rule import UrlRules, UrlRule
 
 
@@ -77,6 +78,8 @@ class _Flask2(Flask):
 
 
 class Flask2(_Flask2):
+
+    session_interface = SecureCookieSessionInterface2()
 
     @staticmethod
     def _assign_default_g():
