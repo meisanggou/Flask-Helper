@@ -110,6 +110,7 @@ class Flask2(_Flask2):
         self.before_request_funcs.setdefault(None, []).append(self._assign_default_g)
         self.before_request_funcs[None].append(self._packet_data)
         self.after_authorization_funcs = []
+        self.extend_functions = dict()
 
     def register_blues(self):
         for blue_item in self.blues:
@@ -123,19 +124,31 @@ class Flask2(_Flask2):
         self.blues.append(blue)
 
     def filter_user_agent(self, *accept_agent):
+        if "filter_user_agent" in self.extend_functions:
+            return self.extend_functions["filter_user_agent"]
         fa = FilterUserAgent(self, *accept_agent)
+        self.extend_functions["filter_user_agent"] = fa
         return fa
 
     def cross_domain(self):
+        if "cross_domain" in self.extend_functions:
+            return self.extend_functions["cross_domain"]
         fc = FlaskCrossDomain(self)
+        self.extend_functions["cross_domain"] = fc
         return fc
 
     def handle_30x(self):
+        if "handle_30x" in self.extend_functions:
+            return self.extend_functions["handle_30x"]
         h = Handle30X(self)
+        self.extend_functions["handle_30x"] = h
         return h
 
     def real_ip(self, trust_proxy=None):
+        if "real_ip" in self.extend_functions:
+            return self.extend_functions["real_ip"]
         if trust_proxy is None:
             trust_proxy = ["127.0.0.1"]
         r = RealIP(self, trust_proxy)
+        self.extend_functions["real_ip"] = r
         return r

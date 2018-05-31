@@ -10,6 +10,8 @@ app = Flask2(__name__)
 app.cross_domain()
 app.filter_user_agent()
 app.handle_30x()
+app.real_ip()
+app.real_ip()
 
 
 @app.route("/")
@@ -20,4 +22,4 @@ def index():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(port=10000)
