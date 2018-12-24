@@ -1,6 +1,9 @@
 #! /usr/bin/env python
 # coding: utf-8
 
+import re
+from werkzeug.http import HTTP_STATUS_CODES
+from werkzeug.serving import run_simple
 from flask_helper import Flask2
 
 __author__ = '鹛桑够'
@@ -21,5 +24,40 @@ def index():
     return "success"
 
 
+class MyMiddleware(object):
+
+    def __init__(self, wsgi_app, accept_agent=None):
+        if accept_agent is None:
+            accept_agent = "(firefox|chrome|safari|window|GitHub|jyrequests|micro|Aliyun)"
+        self.wsgi_app = wsgi_app
+
+    def __call__(self, environ, start_response):
+        if "HTTP_USER_AGENT" not in environ:
+            status_code = 403
+            status = "%s %s" % (status_code, HTTP_STATUS_CODES.get(status_code, ""))
+            headers = [("Content-Type", "text/html")]
+            start_response(status, headers)
+            return ""
+        user_agent = environ["HTTP_USER_AGENT"]
+        path_info = environ["PATH_INFO"]
+        print("middleware")
+        print(environ)
+        for k, v in environ.items():
+            print("%s : %s" % (k, v))
+            # print(v)
+        if path_info == "/404":
+            status = "404 %s" % HTTP_STATUS_CODES.get(404, "")
+            headers = [("Content-Type", "text/html")]
+            start_response(status, headers)
+            return ""
+        result = self.wsgi_app(environ, start_response)
+
+        return result
+
+
+app.wsgi_app = MyMiddleware(app.wsgi_app)
+
+
 if __name__ == "__main__":
-    app.run(port=10000)
+    run_simple("127.0.0.1", 10000, app)
+    # app.run(port=10000)
