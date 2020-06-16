@@ -4,23 +4,24 @@
 import re
 from werkzeug.http import HTTP_STATUS_CODES
 from werkzeug.serving import run_simple
-from flask_helper import Flask2
+from flask_helper._flask import FlaskHelper
 
 __author__ = '鹛桑够'
 
 
-app = Flask2(__name__)
+app = FlaskHelper(__name__)
+app.cross_domain()
 app.cross_domain()
 app.filter_user_agent()
 app.handle_30x()
 app.real_ip()
-app.real_ip()
+# app.real_ip()
 
 
 @app.route("/")
 def index():
-    from flask_helper import remote_addr
-    print(remote_addr)
+    # from flask_helper import remote_addr
+    # print(remote_addr)
     return "success"
 
 
@@ -55,9 +56,9 @@ class MyMiddleware(object):
         return result
 
 
-app.wsgi_app = MyMiddleware(app.wsgi_app)
+# app.wsgi_app = MyMiddleware(app.wsgi_app)
 
 
 if __name__ == "__main__":
-    run_simple("127.0.0.1", 10000, app)
+    run_simple("127.0.0.1", 8080, app)
     # app.run(port=10000)

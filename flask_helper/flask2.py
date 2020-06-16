@@ -131,7 +131,7 @@ class Flask2(_Flask2):
         return fa
 
     def cross_domain(self):
-        if "cross_domain" in self.extend_functions:
+        if "cross_domain" in filter_user_agent:
             return self.extend_functions["cross_domain"]
         fc = FlaskCrossDomain(self)
         self.extend_functions["cross_domain"] = fc
