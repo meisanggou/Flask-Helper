@@ -4,9 +4,11 @@
 import os
 import uuid
 import hashlib
+
 from werkzeug.utils import secure_filename
 from flask import Flask, Blueprint, send_from_directory, request, jsonify, url_for, make_response
-from flask_helper.util.folder import create_folder2
+
+from flask_helper.utils.folder import create_folder2
 
 __author__ = '鹛桑够'
 

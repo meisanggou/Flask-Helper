@@ -4,19 +4,19 @@
 #  __author__ = 'meisanggou'
 
 try:
-    from setuptools import setup
+    from setuptools import setup, find_packages
 except ImportError:
     from distutils.core import setup
 
 import sys
 
-if sys.version_info <= (2, 7):
-    sys.stderr.write("ERROR: flask_helper requires Python Version 2.7 or above.\n")
+if sys.version_info <= (3, 7):
+    sys.stderr.write("ERROR: flask_helper requires Python Version 3.7 or above.\n")
     sys.stderr.write("Your Python Version is %s.%s.%s.\n" % sys.version_info[:3])
     sys.exit(1)
 
 name = "Flask-Helper"
-version = "0.19"
+version = "1.0"
 url = "https://github.com/meisanggou/Flask-Helper"
 license = "MIT"
 author = "meisanggou"
@@ -28,9 +28,9 @@ install_requires = ["Flask"]
 setup(name=name,
       version=version,
       author=author,
-      author_email="zhouheng@gene.ac",
+      author_email="zhou5315938@163.com",
       url=url,
-      packages=["flask_helper", "flask_helper/util"],
+      packages=["flask_helper", "flask_helper/utils", 'flask_helper/hooks'],
       license=license,
       description=short_description,
       long_description=long_description,

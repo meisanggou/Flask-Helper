@@ -3,7 +3,7 @@
 from flask import request, g, make_response
 
 from flask_helper.flask_hook import FlaskHook
-from flask_helper.util.ip import ip_value_str
+from flask_helper.utils.ip import ip_value_str
 
 __author__ = 'zhouhenglc'
 
