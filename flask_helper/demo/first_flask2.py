@@ -4,12 +4,12 @@
 import re
 from werkzeug.http import HTTP_STATUS_CODES
 from werkzeug.serving import run_simple
-from flask_helper._flask import FlaskHelper
+from flask_helper.flask2 import Flask2
 
 __author__ = '鹛桑够'
 
 
-app = FlaskHelper(__name__)
+app = Flask2(__name__)
 app.cross_domain()
 app.cross_domain()
 app.filter_user_agent()
@@ -60,5 +60,5 @@ class MyMiddleware(object):
 
 
 if __name__ == "__main__":
-    run_simple("127.0.0.1", 8080, app)
-    # app.run(port=10000)
+    # run_simple("127.0.0.1", 8080, app)
+    app.run(port=8080)

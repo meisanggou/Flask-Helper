@@ -5,20 +5,18 @@ import sys
 import re
 from datetime import datetime
 from flask import Flask, g, jsonify, request, make_response, send_from_directory
-from .ctx import RequestContext2
-from user_agent import FilterUserAgent
-from cross_domain import FlaskCrossDomain
-from handle_30x import Handle30X
-from ip import RealIP
-from sessions import SecureCookieSessionInterface2
+from flask_helper.ctx import RequestContext2
+from flask_helper.sessions import SecureCookieSessionInterface2
 from flask_helper.url_rule import UrlRules, UrlRule
+
+from flask_helper._flask import FlaskHelper
 
 
 __author__ = '鹛桑够'
 
 
 #  内置_Flask2 增加 app_url_prefix即所有注册路由的前缀 添加APP运行时间 run_time 自动注册handle500
-class _Flask2(Flask):
+class _Flask2(FlaskHelper):
     TIME_FORMAT = '%Y-%m-%d %H:%M:%S'
 
     def __init__(self, import_name, **kwargs):
@@ -29,7 +27,7 @@ class _Flask2(Flask):
         self.register_error_handler(500, self._handle_500)
 
     def add_broken_rule(self, rule):
-        if isinstance(rule, (str, unicode)):
+        if isinstance(rule, (str, )):
             self._broken_rules.add(rule)
 
     def clear_broken_rules(self):
@@ -122,33 +120,3 @@ class Flask2(_Flask2):
     def add_blueprint(self, blue):
         blue.static_routes = UrlRules()
         self.blues.append(blue)
-
-    def filter_user_agent(self, *accept_agent):
-        if "filter_user_agent" in self.extend_functions:
-            return self.extend_functions["filter_user_agent"]
-        fa = FilterUserAgent(self, *accept_agent)
-        self.extend_functions["filter_user_agent"] = fa
-        return fa
-
-    def cross_domain(self):
-        if "cross_domain" in filter_user_agent:
-            return self.extend_functions["cross_domain"]
-        fc = FlaskCrossDomain(self)
-        self.extend_functions["cross_domain"] = fc
-        return fc
-
-    def handle_30x(self):
-        if "handle_30x" in self.extend_functions:
-            return self.extend_functions["handle_30x"]
-        h = Handle30X(self)
-        self.extend_functions["handle_30x"] = h
-        return h
-
-    def real_ip(self, trust_proxy=None):
-        if "real_ip" in self.extend_functions:
-            return self.extend_functions["real_ip"]
-        if trust_proxy is None:
-            trust_proxy = ["127.0.0.1"]
-        r = RealIP(self, trust_proxy)
-        self.extend_functions["real_ip"] = r
-        return r
