@@ -1,5 +1,8 @@
 # JYFlask
 
+## 1.1
+Flask.run 使 eventlet
+
 ## 1.0
 只允许python3
 

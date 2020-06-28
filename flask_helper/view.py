@@ -8,6 +8,10 @@ __author__ = 'zhouhenglc'
 
 
 class View(Blueprint):
+    jinja_env = {}
+
+    def register_jinja_global_env(self, key, value):
+        self.jinja_env[key] = value
 
     def add_url_rule(self, rule, endpoint=None, view_func=None, **options):
         if view_func:

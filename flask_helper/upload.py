@@ -52,7 +52,7 @@ def support_upload2(app_or_blue, folder_root, file_url_prefix, sub_folders, uplo
         raise RuntimeError("only support Flask or Blueprint object")
     if file_url_prefix.endswith("/") is False:
         file_url_prefix += "/"
-    if isinstance(sub_folders, basestring):
+    if isinstance(sub_folders, str):
         static_folder = create_folder2(folder_root, sub_folders)
         url = file_url_prefix + sub_folders
     else:

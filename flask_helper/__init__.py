@@ -2,11 +2,9 @@
 # coding: utf-8
 
 from flask import g, request, jsonify, make_response
-# from globals import remote_addr
-# from flask2 import Flask2
-# from cross_domain import FlaskCrossDomain
-# from template import RenderTemplate
-# from upload import support_upload, support_upload2
+from flask_helper.globals import remote_addr
+from flask_helper.flask2 import Flask2
+
 
 
 __author__ = 'meisanggou'

@@ -87,6 +87,11 @@ class FlaskHelper(Flask, PredefinedHookFlask):
         if os.path.exists(default_views_folder):
             self.register_views(default_views_folder)
 
+    def register_blueprint(self, blueprint, **options):
+        if isinstance(blueprint, View):
+            self.jinja_env.globals.update(blueprint.jinja_env)
+        Flask.register_blueprint(self, blueprint, **options)
+
     def register_views(self, views_folder):
         views_folder = os.path.abspath(views_folder)
         if views_folder in self.views_folders:
@@ -110,14 +115,16 @@ class FlaskHelper(Flask, PredefinedHookFlask):
             self.add_hook(h_class)
 
     def run(self, host=None, port=None, **options):
+        log = options.pop('log', None)
         try:
             import eventlet
             from eventlet import wsgi
+            eventlet.monkey_patch()
             if host is None:
                 host = '0.0.0.0'
             if port is None:
                 port = 5000
             listen = eventlet.listen((host, port))
-            wsgi.server(listen, self)
+            wsgi.server(listen, self, log=log, **options)
         except ImportError:
             Flask.run(host, port, **options)
