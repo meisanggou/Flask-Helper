@@ -1,5 +1,9 @@
 # JYFlask
 
+## 1.2
+Flask增加log
+Hook也包含log对象，默认使用app的log属性
+
 ## 1.1
 Flask.run 使 eventlet
 

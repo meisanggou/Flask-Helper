@@ -1,5 +1,6 @@
 # !/usr/bin/env python
 # coding: utf-8
+from flask_helper.utils.log import DummyLog
 
 
 __author__ = 'zhouhenglc'
@@ -10,6 +11,9 @@ class FlaskHook(object):
 
     def __init__(self, app):
         self.app = app
+        self.log = DummyLog()
+        if hasattr(self.app, 'log'):
+            self.log = self.app.log
 
     def before_request(self):
         pass

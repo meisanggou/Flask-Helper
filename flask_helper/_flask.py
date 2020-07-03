@@ -13,14 +13,16 @@ from flask_helper.view import View
 
 from flask_helper.utils.loader import load_classes_from_directory
 from flask_helper.utils.loader import load_objects_from_directory
+from flask_helper.utils.log import DummyLog
 
 __author__ = 'zhouhenglc'
 
 
 class _HookFlask(object):
 
-    def __init__(self):
+    def __init__(self, log=None):
         self.hooks = []
+        self._hook_log = log if log else DummyLog()
 
     def before_request_hook(self):
         for hook in self.hooks:
@@ -43,6 +45,9 @@ class _HookFlask(object):
                 return self.hooks[i]
             if hook_obj.priority < self.hooks[i].priority:
                 insert_i = i
+        self._hook_log.info('add hook %s priority is %s',
+                            hook_obj.__class__.__name__,
+                            hook_obj.priority)
         self.hooks.insert(insert_i, hook_obj)
         return hook_obj
 
@@ -70,8 +75,9 @@ class PredefinedHookFlask(_HookFlask):
 class FlaskHelper(Flask, PredefinedHookFlask):
 
     def __init__(self, import_name, *args, **kwargs):
+        self.log = kwargs.pop('log', DummyLog())
         Flask.__init__(self, import_name, *args, **kwargs)
-        PredefinedHookFlask.__init__(self)
+        PredefinedHookFlask.__init__(self, self.log)
         self.before_request_funcs.setdefault(None, [])
         self.after_request_funcs.setdefault(None, [])
         self.before_request_funcs[None].append(self.before_request_hook)
@@ -90,9 +96,11 @@ class FlaskHelper(Flask, PredefinedHookFlask):
     def register_blueprint(self, blueprint, **options):
         if isinstance(blueprint, View):
             self.jinja_env.globals.update(blueprint.jinja_env)
+        self.log.info('register blueprint %s', blueprint.name)
         Flask.register_blueprint(self, blueprint, **options)
 
     def register_views(self, views_folder):
+        self.log.info('register views from %s', views_folder)
         views_folder = os.path.abspath(views_folder)
         if views_folder in self.views_folders:
             return
@@ -100,10 +108,12 @@ class FlaskHelper(Flask, PredefinedHookFlask):
         module_prefix = 'flask_helper.views_%s' % len(self.hooks_folders)
         v_objects = load_objects_from_directory(views_folder, module_prefix,
                                                 View)
+        print(v_objects)
         for v_obj in v_objects:
             self.register_blueprint(v_obj)
 
     def register_hooks(self, hooks_folder):
+        self.log.info('register hooks from %s', hooks_folder)
         hooks_folder = os.path.abspath(hooks_folder)
         if hooks_folder in self.hooks_folders:
             return
@@ -119,7 +129,7 @@ class FlaskHelper(Flask, PredefinedHookFlask):
         try:
             import eventlet
             from eventlet import wsgi
-            eventlet.monkey_patch()
+            # eventlet.monkey_patch()
             if host is None:
                 host = '0.0.0.0'
             if port is None:

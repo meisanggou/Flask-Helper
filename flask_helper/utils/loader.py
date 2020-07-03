@@ -85,7 +85,7 @@ def load_objects_from_directory(top_dir, module_prefix, obj_type):
             mp = '.'.join([module_prefix, ] + _sub_m_l)
             _objects = load_objects(mp, os.path.join(root, _file), obj_type)
             objects.extend(_objects)
-    return objects
+    return list(set(objects))
 
 
 if __name__ == '__main__':

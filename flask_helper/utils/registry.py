@@ -5,7 +5,7 @@
 __author__ = 'zhouhenglc'
 
 
-class ResourceRegistry(object):
+class DataRegistry(object):
     _instance = None
 
     def __new__(cls, *args, **kwargs):
