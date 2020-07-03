@@ -1,5 +1,8 @@
 # JYFlask
 
+## 1.2.1
+删除不必要的print
+
 ## 1.2
 Flask增加log
 Hook也包含log对象，默认使用app的log属性

@@ -108,7 +108,6 @@ class FlaskHelper(Flask, PredefinedHookFlask):
         module_prefix = 'flask_helper.views_%s' % len(self.hooks_folders)
         v_objects = load_objects_from_directory(views_folder, module_prefix,
                                                 View)
-        print(v_objects)
         for v_obj in v_objects:
             self.register_blueprint(v_obj)
 
