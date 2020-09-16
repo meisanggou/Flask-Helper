@@ -111,6 +111,7 @@ class Flask2(_Flask2):
         self.extend_functions = dict()
 
     def register_blues(self):
+        self.log.warning('register_blues is about to be abandoned')
         for blue_item in self.blues:
             if hasattr(blue_item, "static_routes") is True:
                 for rule_item in blue_item.static_routes:
@@ -118,5 +119,6 @@ class Flask2(_Flask2):
             self.register_blueprint(blue_item)
 
     def add_blueprint(self, blue):
+        self.log.warning('add_blueprint is about to be abandoned')
         blue.static_routes = UrlRules()
         self.blues.append(blue)

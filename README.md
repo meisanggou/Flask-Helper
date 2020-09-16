@@ -1,5 +1,8 @@
 # JYFlask
 
+## 1.2.2
+add HookRegistry
+
 ## 1.2.1
 删除不必要的print
 

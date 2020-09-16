@@ -89,6 +89,7 @@ class FlaskHelper(Flask, PredefinedHookFlask):
             self.register_hooks(default_hooks_folder)
 
         self.views_folders = set()
+        self._views = set()
         default_views_folder = os.path.join(self.root_path, 'views')
         if os.path.exists(default_views_folder):
             self.register_views(default_views_folder)
@@ -109,7 +110,11 @@ class FlaskHelper(Flask, PredefinedHookFlask):
         v_objects = load_objects_from_directory(views_folder, module_prefix,
                                                 View)
         for v_obj in v_objects:
+            if v_obj.name in self._views:
+                self.log.warning('%s blueprint name exist', v_obj.name)
+                return
             self.register_blueprint(v_obj)
+            self._views.add(v_obj.name)
 
     def register_hooks(self, hooks_folder):
         self.log.info('register hooks from %s', hooks_folder)

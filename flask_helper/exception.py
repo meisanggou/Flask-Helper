@@ -30,3 +30,15 @@ class RequestException(Exception):
     def __str__(self):
         _str = 'msg: %s, detail: %s' % (self.msg, self.detail)
         return _str
+
+
+class RepeatCallback(Exception):
+
+    def __init__(self, resource, event):
+        self.resource = resource
+        self.event = event
+
+    def __str__(self):
+        s = 'Repeat set callback for resource=%s,event=%s' % (self.resource,
+                                                             self.event)
+        return s
