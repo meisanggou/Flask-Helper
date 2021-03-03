@@ -33,6 +33,7 @@ class DataRegistry(object):
     def set_default(self, key, default):
         if key not in self._dict:
             self._dict[key] = default
+        return self._dict[key]
 
     def append(self, key, value):
         _values = self.get(key)
