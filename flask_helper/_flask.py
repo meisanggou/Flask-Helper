@@ -57,8 +57,8 @@ class PredefinedHookFlask(_HookFlask):
         hook_obj = self.add_hook(CorsHook, **kwargs)
         return hook_obj
 
-    def filter_user_agent(self, *args):
-        hook_obj = self.add_hook(UserAgentHook, *args)
+    def filter_user_agent(self, *args, **kwargs):
+        hook_obj = self.add_hook(UserAgentHook, *args, **kwargs)
         return hook_obj
 
     def handle_30x(self, **kwargs):

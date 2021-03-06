@@ -1,5 +1,8 @@
 # JYFlask
 
+## 1.2.3
+user agent hook 允许过滤一些path不校验
+
 ## 1.2.2
 add HookRegistry
 
