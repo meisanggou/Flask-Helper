@@ -35,6 +35,12 @@ class DataRegistry(object):
             self._dict[key] = default
         return self._dict[key]
 
+    def exist_in(self, key, value):
+        _values = self.get(key)
+        if not _values:
+            _values = []
+        return value in _values
+
     def append(self, key, value):
         _values = self.get(key)
         if not _values:
@@ -63,6 +69,11 @@ class HookRegistry(object):
             self._dict = collections.defaultdict(dict)
             self._one_dict = collections.defaultdict(dict)
 
+    @staticmethod
+    def _get_id(callback):
+        # TODO
+        return callback.__name__
+
     @classmethod
     def get_instance(cls):
         if cls._instance is not None:
@@ -70,8 +81,12 @@ class HookRegistry(object):
         return cls()
 
     def subscribe(self, callback, resource, event):
-        self._dict[resource].setdefault(event, [])
-        self._dict[resource][event].append(callback)
+        callback_list = self._dict[resource].setdefault(event, [])
+        callback_id = self._get_id(callback)
+        for ck in callback_list:
+            if callback_id == self._get_id(ck):
+                return
+        callback_list.append(callback)
 
     def notify(self, resource, event, trigger, **kwargs):
         callbacks = self._dict[resource].get(event, [])
@@ -87,3 +102,40 @@ class HookRegistry(object):
         callback_fun = self._one_dict[resource].get(event, None)
         if callback_fun:
             return callback_fun(resource, event, trigger, **kwargs)
+
+
+_HOOK = HookRegistry()
+DATA_REGISTRY = DataRegistry()
+
+
+def notify(resource, event, trigger, **kwargs):
+    _HOOK.notify(resource, event, trigger, **kwargs)
+
+
+def subscribe(callback, resource, event):
+    return _HOOK.subscribe(callback, resource, event)
+
+
+def subscribe_callback(*args):
+    if len(args) == 2:
+        resource = args[0]
+        event = args[1]
+    elif len(args) == 3:
+        callback = args[0]
+        resource = args[1]
+        event = args[2]
+        return _subscribe_callback(callback, resource, event)
+    else:
+        raise RuntimeError('require args: callback, resource, event')
+    def decorator(f):
+        subscribe_callback(f, resource, event)
+        return f
+    return decorator
+
+
+def _subscribe_callback(callback, resource, event):
+    return _HOOK.set_callback(callback, resource, event)
+
+
+def notify_callback(resource, event,trigger, **kwargs):
+    return _HOOK.callback(resource, event, trigger, **kwargs)

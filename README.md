@@ -1,4 +1,8 @@
-# JYFlask
+# Flask-Heler
+
+## 1.2.4
+user agent hook 允许从url参数中取User-Agent
+utils.registry add notify and notify_callback
 
 ## 1.2.3
 user agent hook 允许过滤一些path不校验
