@@ -1,5 +1,8 @@
 # Flask-Heler
 
+## 1.2.5
+flask_helper.view.View支持view_context_func
+
 ## 1.2.4
 user agent hook 允许从url参数中取User-Agent
 utils.registry add notify and notify_callback
