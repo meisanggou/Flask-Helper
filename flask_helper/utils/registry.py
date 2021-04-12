@@ -35,11 +35,14 @@ class DataRegistry(object):
             self._dict[key] = default
         return self._dict[key]
 
-    def exist_in(self, key, value):
+    def exist_in(self, key, value, add_not_exist=False):
         _values = self.get(key)
         if not _values:
             _values = []
-        return value in _values
+        r = value in _values
+        if not r and add_not_exist:
+            self.append(key, value)
+        return r
 
     def append(self, key, value):
         _values = self.get(key)

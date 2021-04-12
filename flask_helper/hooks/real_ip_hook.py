@@ -20,7 +20,8 @@ class RealIPHook(FlaskHook):
 
     def before_request(self):
         request_ip = request.remote_addr
-        if self.forwarded_key in request.headers and request_ip in self.trust_proxy:
+        if self.forwarded_key in request.headers \
+                and request_ip in self.trust_proxy:
             l_ip = request.headers[self.forwarded_key].split(",")
             request_ip = l_ip[0]
             if isinstance(self.trust_proxy, list):
