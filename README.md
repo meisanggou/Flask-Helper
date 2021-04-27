@@ -1,5 +1,8 @@
 # Flask-Heler
 
+## 1.2.6
+utils.registry exist_in 支持 add_not_exist
+
 ## 1.2.5
 flask_helper.view.View支持view_context_func
 
