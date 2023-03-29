@@ -2,7 +2,10 @@
 # coding: utf-8
 
 from itsdangerous import BadSignature
-from flask.helpers import total_seconds
+try:
+    from flask.helpers import total_seconds
+except ImportError:
+    total_seconds = None
 from flask.sessions import SecureCookieSessionInterface
 from flask import g
 
@@ -19,7 +22,10 @@ class SecureCookieSessionInterface2(SecureCookieSessionInterface):
         header_cookie = request.headers.get("X-COOKIE-%s" % app.session_cookie_name.upper())
         if not val and not header_cookie:
             return self.session_class()
-        max_age = total_seconds(app.permanent_session_lifetime)
+        if hasattr(app.permanent_session_lifetime, 'total_seconds'):
+            max_age = int(app.permanent_session_lifetime.total_seconds())
+        else:
+            max_age = total_seconds(app.permanent_session_lifetime)
         session_data = dict()
         if val is not None:
             try:

@@ -1,5 +1,11 @@
 # Flask-Heler
 
+## 2.0.1
+不再支持from flask_helper import globals
+
+## 1.2.7
+utils.log支持getLogger
+
 ## 1.2.6
 utils.registry exist_in 支持 add_not_exist
 

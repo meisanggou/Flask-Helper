@@ -51,6 +51,13 @@ class DataRegistry(object):
         _values.append(value)
         self.set(key, _values)
 
+    def extend(self, key, value):
+        _values = self.get(key)
+        if not _values:
+            _values = []
+        _values.extend(value)
+        self.set(key, _values)
+
     def update(self, key, **kwargs):
         _values = self.get(key)
         if not _values:
