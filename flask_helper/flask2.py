@@ -64,8 +64,8 @@ class _Flask2(FlaskHelper):
                 raise RuntimeError('No static folder for this object')
             static_folder = self.static_folder
 
-        cache_timeout = self.get_send_file_max_age(filename)
-        return send_from_directory(static_folder, filename, cache_timeout=cache_timeout)
+        max_age = self.get_send_file_max_age(filename)
+        return send_from_directory(static_folder, filename, max_age=max_age)
 
     def request_context(self, environ):
         return RequestContext2(self, environ)

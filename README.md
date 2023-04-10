@@ -1,5 +1,9 @@
 # Flask-Heler
 
+## 2.0.2
+修复
+TypeError: send_file() got an unexpected keyword argument 'cache_timeout'
+
 ## 2.0.1
 不再支持from flask_helper import globals
 
