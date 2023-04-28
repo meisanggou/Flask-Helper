@@ -18,8 +18,8 @@ class SecureCookieSessionInterface2(SecureCookieSessionInterface):
         s = self.get_signing_serializer(app)
         if s is None:
             return None
-        val = request.cookies.get(app.session_cookie_name)
-        header_cookie = request.headers.get("X-COOKIE-%s" % app.session_cookie_name.upper())
+        val = request.cookies.get(self.get_cookie_name(app))
+        header_cookie = request.headers.get("X-COOKIE-%s" % self.get_cookie_name(app).upper())
         if not val and not header_cookie:
             return self.session_class()
         if hasattr(app.permanent_session_lifetime, 'total_seconds'):

@@ -1,5 +1,9 @@
 # Flask-Heler
 
+## 2.0.3
+修复
+'Flask2' object has no attribute 'session_cookie_name'
+
 ## 2.0.2
 修复
 TypeError: send_file() got an unexpected keyword argument 'cache_timeout'
