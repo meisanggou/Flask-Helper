@@ -83,20 +83,6 @@ class Flask2(_Flask2):
     def _assign_default_g():
         pass
 
-    @staticmethod
-    def _packet_data():
-        # if request.method == "OPTIONS":
-        #     return make_response("success", 204)
-        if request.method != "GET":
-            if request.json is None:
-                g.request_data = {}
-            else:
-                g.request_data = request.json
-            if type(g.request_data) != dict:
-                return make_response("访问受限", 400)
-        else:
-            g.request_args = request.args
-
     def ping_func(self):
         ping_msg = "Ping %s success. App run at %s" % (request.path, self.run_time)
         return jsonify({"status": self.config.get("MSG_STATUS", 2), "message": ping_msg})
@@ -106,7 +92,6 @@ class Flask2(_Flask2):
         super(Flask2, self).__init__(import_name, **kwargs)
         self.add_url_rule("/ping/", endpoint="app_ping", view_func=self.ping_func)
         self.before_request_funcs.setdefault(None, []).append(self._assign_default_g)
-        self.before_request_funcs[None].append(self._packet_data)
         self.after_authorization_funcs = []
         self.extend_functions = dict()
 

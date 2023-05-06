@@ -1,5 +1,8 @@
 # Flask-Heler
 
+## 2.0.4
+删除_packet_data
+
 ## 2.0.3
 修复
 'Flask2' object has no attribute 'session_cookie_name'
