@@ -1,5 +1,7 @@
 # Flask-Heler
 
+## 2.0.5
+支持设置 cross_domain 参数，可以设置 methods, origin, headers
 ## 2.0.4
 删除_packet_data
 
