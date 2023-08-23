@@ -140,5 +140,5 @@ class FlaskHelper(Flask, PredefinedHookFlask):
                 port = 5000
             listen = eventlet.listen((host, port))
             wsgi.server(listen, self, log=log, **options)
-        except ImportError:
-            Flask.run(host, port, **options)
+        except (ImportError, Exception):
+            super().run(host, port, **options)

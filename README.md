@@ -1,5 +1,8 @@
 # Flask-Heler
 
+## 2.0.6
+修复因为eventlet问题的启动问题
+
 ## 2.0.5
 支持设置 cross_domain 参数，可以设置 methods, origin, headers
 ## 2.0.4
