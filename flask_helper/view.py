@@ -20,12 +20,17 @@ def _context_func(*args):
 class View(Blueprint):
     jinja_env = {}
     view_context_func = _context_func
+    _view_mapping = {}
 
     def register_jinja_global_env(self, key, value):
         self.jinja_env[key] = value
 
     def add_url_rule(self, rule, endpoint=None, view_func=None, **options):
         if view_func:
+            if view_func in self._view_mapping:
+                n_func = self._view_mapping[view_func]
+                return Blueprint.add_url_rule(self, rule, endpoint, n_func,
+                                              **options)
             @functools.wraps(view_func)
             def inner(*args, **kwargs):
                 with self.view_context_func() as context:
@@ -37,6 +42,9 @@ class View(Blueprint):
                         return jsonify(r)
 
                     return r
-            Blueprint.add_url_rule(self, rule, endpoint, inner, **options)
+            self._view_mapping[view_func] = inner
+            return Blueprint.add_url_rule(self, rule, endpoint, inner,
+                                          **options)
         else:
-            Blueprint.add_url_rule(self, rule, endpoint, view_func, **options)
+            return Blueprint.add_url_rule(self, rule, endpoint, view_func,
+                                          **options)

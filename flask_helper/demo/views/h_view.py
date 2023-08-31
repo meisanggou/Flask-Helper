@@ -8,6 +8,7 @@ h_view = View('h_view', __name__, url_prefix='/h')
 h2_view = h_view
 
 
-@h_view.route('/')
+@h_view.route('/abc')
+@h_view.route('/abc/ping')
 def index():
     return 'h success'

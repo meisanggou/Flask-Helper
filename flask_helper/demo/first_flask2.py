@@ -19,6 +19,7 @@ app.real_ip()
 
 
 @app.route("/")
+@app.route('/ping')
 def index():
     # from flask_helper import remote_addr
     # print(remote_addr)
