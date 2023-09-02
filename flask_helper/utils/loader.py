@@ -56,13 +56,14 @@ def load_objects(module_prefix, file_path, obj_type):
     return r_objects
 
 
-def load_classes_from_directory(top_dir, module_prefix, cls_type):
+def load_classes_from_directory(top_dir, module_prefix, cls_type,
+                                ignore_error=True, file_suffix='.py'):
     top_dir = os.path.abspath(top_dir)
     top_len = len(top_dir)
     classes = []
     for root, dirs, files in os.walk(top_dir):
         for _file in files:
-            if _file[-3:] != '.py':
+            if not  _file.endswith(file_suffix):
                 continue
             _sub_m = _SEPARATOR_REGEX.sub('.', root[top_len:]).split('.')
             _sub_m_l = [x for x in _sub_m if x.strip()]
@@ -72,13 +73,14 @@ def load_classes_from_directory(top_dir, module_prefix, cls_type):
     return classes
 
 
-def load_objects_from_directory(top_dir, module_prefix, obj_type):
+def load_objects_from_directory(top_dir, module_prefix, obj_type,
+                                ignore_error=True, file_suffix='.py'):
     top_dir = os.path.abspath(top_dir)
     top_len = len(top_dir)
     objects = []
     for root, dirs, files in os.walk(top_dir):
         for _file in files:
-            if _file[-3:] != '.py':
+            if not  _file.endswith(file_suffix):
                 continue
             _sub_m = _SEPARATOR_REGEX.sub('.', root[top_len:]).split('.')
             _sub_m_l = [x for x in _sub_m if x.strip()]
