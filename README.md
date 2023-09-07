@@ -1,5 +1,8 @@
 # Flask-Heler
 
+## 2.0.9
+修复cross_domain bug
+
 ## 2.0.8
 支持加载固定后缀的view 和 hook
 

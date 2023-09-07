@@ -9,7 +9,7 @@ class CorsHook(FlaskHook):
     priority = 110
     default_methods = ['POST', 'PUT', 'DELETE', 'GET']
     default_origin = '*'
-    default_headers = ['Content-Tyep']
+    default_headers = ['Content-Type']
 
     def __init__(self, app, **kwargs):
         FlaskHook.__init__(self, app)
