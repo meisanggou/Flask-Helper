@@ -84,31 +84,42 @@ class FlaskHelper(Flask, PredefinedHookFlask):
         self.after_request_funcs.setdefault(None, [])
         self.before_request_funcs[None].append(self.before_request_hook)
         self.after_request_funcs[None].append(self.after_request_hook)
+        self._set_default_hooks_views()
+
+    def _set_default_hooks_views(self):
+        _ms = self.name.rsplit('.', 1)
+        if len(_ms) > 1:
+            hooks_mp = '%s.hooks' % _ms[0]
+            views_mp = '%s.views' % _ms[0]
+        else:
+            hooks_mp = None
+            views_mp = None
 
         self.hooks_folders = set()
         default_hooks_folder = os.path.join(self.root_path, 'hooks')
         if os.path.exists(default_hooks_folder):
-            self.register_hooks(default_hooks_folder)
+            self.register_hooks(default_hooks_folder, hooks_mp)
 
         self.views_folders = set()
         self._views = set()
         default_views_folder = os.path.join(self.root_path, 'views')
         if os.path.exists(default_views_folder):
-            self.register_views(default_views_folder)
+            self.register_views(default_views_folder, views_mp)
 
     def register_blueprint(self, blueprint, **options):
         if isinstance(blueprint, View):
             self.jinja_env.globals.update(blueprint.jinja_env)
         self.log.info('register blueprint %s', blueprint.name)
-        Flask.register_blueprint(self, blueprint, **options)
+        super().register_blueprint(blueprint, **options)
 
-    def register_views(self, views_folder):
+    def register_views(self, views_folder, module_prefix=None):
         self.log.info('register views from %s', views_folder)
         views_folder = os.path.abspath(views_folder)
         if views_folder in self.views_folders:
             return
         self.views_folders.add(views_folder)
-        module_prefix = 'flask_helper.views_%s' % len(self.hooks_folders)
+        if module_prefix is None:
+            module_prefix = 'flask_helper.views_%s' % len(self.hooks_folders)
         v_objects = load_objects_from_directory(
             views_folder, module_prefix, View,
             file_suffix=self.view_file_suffix)
@@ -119,13 +130,14 @@ class FlaskHelper(Flask, PredefinedHookFlask):
             self.register_blueprint(v_obj)
             self._views.add(v_obj.name)
 
-    def register_hooks(self, hooks_folder):
+    def register_hooks(self, hooks_folder, module_prefix=None):
         self.log.info('register hooks from %s', hooks_folder)
         hooks_folder = os.path.abspath(hooks_folder)
         if hooks_folder in self.hooks_folders:
             return
         self.hooks_folders.add(hooks_folder)
-        module_prefix = 'flask_helper.hooks_%s' % len(self.hooks_folders)
+        if module_prefix is None:
+            module_prefix = 'flask_helper.hooks_%s' % len(self.hooks_folders)
         h_classes = load_classes_from_directory(
             hooks_folder, module_prefix, FlaskHook,
             file_suffix=self.hook_file_suffix)

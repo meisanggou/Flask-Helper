@@ -1,5 +1,8 @@
 # Flask-Heler
 
+## 2.0.10
+加载默认views hooks 尽量使用真实module name
+
 ## 2.0.9
 修复cross_domain bug
 
