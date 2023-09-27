@@ -4,6 +4,7 @@ from flask import request, g, make_response
 
 from flask_helper.flask_hook import FlaskHook
 from flask_helper.utils.ip import ip_value_str
+from flask_helper.globals import extra_request_ctx
 
 __author__ = 'zhouhenglc'
 
@@ -31,6 +32,7 @@ class RealIPHook(FlaskHook):
                         request_ip = one_proxy
                         break
         g.remote_addr = request_ip
+        extra_request_ctx.set_value('request_ip', request_ip)
         g.ip_value = ip_value_str(ip_str=request_ip)
         if g.ip_value == 0:
             return make_response("IP受限", 403)

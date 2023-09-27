@@ -3,11 +3,14 @@
 from flask import Flask
 import os
 
+from flask_helper.ctx import ExtraRequestContext
 from flask_helper.exception import InvalidHookClass
 from flask_helper.flask_hook import FlaskHook
+from flask_helper.globals import _extra_req_ctx
 from flask_helper.hooks.cors_hook import CorsHook
 from flask_helper.hooks.handle_30x_hook import Handle30xHook
 from flask_helper.hooks.real_ip_hook import RealIPHook
+from flask_helper.hooks.request_id_hook import RequestIDHook
 from flask_helper.hooks.user_agent_hook import UserAgentHook
 from flask_helper.view import View
 
@@ -69,6 +72,10 @@ class PredefinedHookFlask(_HookFlask):
         if trust_proxy is None:
             trust_proxy = ["127.0.0.1"]
         hook_obj = self.add_hook(RealIPHook, trust_proxy=trust_proxy)
+        return hook_obj
+
+    def set_request_id(self, *args, **kwargs):
+        hook_obj = self.add_hook(RequestIDHook, *args, **kwargs)
         return hook_obj
 
 
@@ -158,3 +165,10 @@ class FlaskHelper(Flask, PredefinedHookFlask):
             wsgi.server(listen, self, log=log, **options)
         except (ImportError, Exception):
             super().run(host, port, **options)
+
+    def extra_request_context(self):
+        return ExtraRequestContext()
+
+    def full_dispatch_request(self):
+        _extra_req_ctx.set(self.extra_request_context())
+        return super().full_dispatch_request()

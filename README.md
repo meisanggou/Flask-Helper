@@ -1,5 +1,9 @@
 # Flask-Heler
 
+## 2.1.1
+添加扩展request对象
+支持设置request_ip
+
 ## 2.0.10
 加载默认views hooks 尽量使用真实module name
 
