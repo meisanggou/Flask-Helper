@@ -2,6 +2,7 @@
 # coding: utf-8
 from flask import Flask
 import os
+import re
 
 from flask_helper.ctx import ExtraRequestContext
 from flask_helper.exception import InvalidHookClass
@@ -85,6 +86,10 @@ class FlaskHelper(Flask, PredefinedHookFlask):
         self.log = kwargs.pop('log', DummyLog())
         self.view_file_suffix = kwargs.pop('view_file_suffix', 'view.py')
         self.hook_file_suffix = kwargs.pop('hook_file_suffix', 'hook.py')
+        self.view_file_reg = kwargs.pop(
+            'view_file_reg', '%s$' % re.escape(self.view_file_suffix))
+        self.hook_file_reg = kwargs.pop(
+            'hook_file_reg', '%s$' % re.escape(self.hook_file_suffix))
         Flask.__init__(self, import_name, *args, **kwargs)
         PredefinedHookFlask.__init__(self, self.log)
         self.before_request_funcs.setdefault(None, [])
@@ -129,7 +134,7 @@ class FlaskHelper(Flask, PredefinedHookFlask):
             module_prefix = 'flask_helper.views_%s' % len(self.hooks_folders)
         v_objects = load_objects_from_directory(
             views_folder, module_prefix, View,
-            file_suffix=self.view_file_suffix)
+            file_reg=self.view_file_reg)
         for v_obj in v_objects:
             if v_obj.name in self._views:
                 self.log.warning('%s blueprint name exist', v_obj.name)
@@ -147,7 +152,7 @@ class FlaskHelper(Flask, PredefinedHookFlask):
             module_prefix = 'flask_helper.hooks_%s' % len(self.hooks_folders)
         h_classes = load_classes_from_directory(
             hooks_folder, module_prefix, FlaskHook,
-            file_suffix=self.hook_file_suffix)
+            file_reg=self.hook_file_reg)
         for h_class in h_classes:
             self.add_hook(h_class)
 

@@ -61,13 +61,14 @@ def load_objects(module_prefix, file_path, obj_type):
 
 
 def load_classes_from_directory(top_dir, module_prefix, cls_type,
-                                ignore_error=True, file_suffix='.py'):
+                                ignore_error=True, file_reg='\.py$'):
     top_dir = os.path.abspath(top_dir)
     top_len = len(top_dir)
     classes = []
+    com = re.compile(file_reg)
     for root, dirs, files in os.walk(top_dir):
         for _file in files:
-            if not  _file.endswith(file_suffix):
+            if not com.search(_file):
                 continue
             _sub_m = _SEPARATOR_REGEX.sub('.', root[top_len:]).split('.')
             _sub_m_l = [x for x in _sub_m if x.strip()]
@@ -78,13 +79,14 @@ def load_classes_from_directory(top_dir, module_prefix, cls_type,
 
 
 def load_objects_from_directory(top_dir, module_prefix, obj_type,
-                                ignore_error=True, file_suffix='.py'):
+                                ignore_error=True, file_reg='\.py$'):
     top_dir = os.path.abspath(top_dir)
     top_len = len(top_dir)
     objects = []
+    com = re.compile(file_reg)
     for root, dirs, files in os.walk(top_dir):
         for _file in files:
-            if not  _file.endswith(file_suffix):
+            if not com.search(_file):
                 continue
             _sub_m = _SEPARATOR_REGEX.sub('.', root[top_len:]).split('.')
             _sub_m_l = [x for x in _sub_m if x.strip()]
@@ -96,4 +98,6 @@ def load_objects_from_directory(top_dir, module_prefix, obj_type,
 
 if __name__ == '__main__':
     from flask_helper.flask_hook import FlaskHook
-    load_classes_from_directory(r'../../flask_helper', 'flask_helper.ex_hooks', FlaskHook)
+    all_cls = load_classes_from_directory(r'../../flask_helper',
+                                          'flask_helper.ex_hooks', FlaskHook)
+
