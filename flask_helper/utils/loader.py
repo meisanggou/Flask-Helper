@@ -25,6 +25,8 @@ def _is_instance(obj_type, obj):
 
 def load_classes(module_prefix, file_path, cls_type):
     base_name = os.path.basename(os.path.splitext(file_path)[0])
+    if file_path.endswith('.so'):
+        base_name = base_name.rsplit('.', 1)[0]
     module_name = '.'.join([module_prefix, base_name])
     spec = importlib.util.spec_from_file_location(module_name, file_path)
     module = importlib.util.module_from_spec(spec)
@@ -42,6 +44,8 @@ def load_classes(module_prefix, file_path, cls_type):
 
 def load_objects(module_prefix, file_path, obj_type):
     base_name = os.path.basename(os.path.splitext(file_path)[0])
+    if file_path.endswith('.so'):
+        base_name = base_name.rsplit('.', 1)[0]
     module_name = '.'.join([module_prefix, base_name])
     spec = importlib.util.spec_from_file_location(module_name, file_path)
     module = importlib.util.module_from_spec(spec)
