@@ -1,9 +1,7 @@
 # Flask-Heler
 
-## 2.1.3
+## 2.1.5
 Flask2 支持view_file_reg hook_file_reg
-
-## 2.1.2
 支持动态加载.so
 
 ## 2.1.1

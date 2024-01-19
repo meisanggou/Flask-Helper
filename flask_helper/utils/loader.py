@@ -4,6 +4,7 @@ from functools import partial
 import importlib.util
 import inspect
 import os
+from pathlib import Path
 import re
 import sys
 
@@ -24,7 +25,8 @@ def _is_instance(obj_type, obj):
 
 
 def load_classes(module_prefix, file_path, cls_type):
-    base_name = os.path.basename(os.path.splitext(file_path)[0])
+    path = Path(file_path)
+    base_name = path.name.rsplit('.')[0]
     if file_path.endswith('.so'):
         base_name = base_name.rsplit('.', 1)[0]
     module_name = '.'.join([module_prefix, base_name])
@@ -35,9 +37,11 @@ def load_classes(module_prefix, file_path, cls_type):
     spec.loader.exec_module(module)
     _func = partial(_is_subclass, cls_type)
     classes = inspect.getmembers(module, _func)
+    module_name2 = '.'.join(path.parts[:-1]) + '.%s' % base_name
     r_classes = []
     for _class in classes:
-        if _class[1].__module__ == module_name:
+        cm = _class[1].__module__
+        if cm == module_name or module_name2.endswith(cm):
             r_classes.append(_class[1])
     return r_classes
 
