@@ -1,5 +1,8 @@
 # Flask-Heler
 
+## 2.1.6
+handle_30x_hook 支持308状态码
+
 ## 2.1.5
 Flask2 支持view_file_reg hook_file_reg
 支持动态加载.so

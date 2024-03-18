@@ -15,7 +15,7 @@ class Handle30xHook(FlaskHook):
         self.protocol_key = protocol_key
 
     def after_request(self, response):
-        if response.status_code > 302 or response.status_code < 301:
+        if response.status_code not in [301, 302, 308]:
             return response
         if self.protocol_key in request.headers:
             pro = request.headers[self.protocol_key]
